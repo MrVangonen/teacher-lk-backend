@@ -1,0 +1,26 @@
+{
+  "name": "teacher-lk-backend",
+  "version": "1.0.0",
+  "description": "backend for teacher-lk-frontend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon start index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MrVangonen/teacher-lk-backend.git"
+  },
+  "author": "Daniil Vangonen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MrVangonen/teacher-lk-backend/issues"
+  },
+  "homepage": "https://github.com/MrVangonen/teacher-lk-backend#readme",
+  "devDependencies": {
+    "express": "^4.17.1"
+  },
+  "dependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
