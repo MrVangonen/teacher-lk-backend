@@ -1,4 +1,4 @@
-## teacher-lk-backend
+## Teacher-lk-backend
 Restful API for teacher-lk-frontend
  
 ## Project setup
