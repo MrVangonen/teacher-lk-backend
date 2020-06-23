@@ -17,10 +17,9 @@
     "url": "https://github.com/MrVangonen/teacher-lk-backend/issues"
   },
   "homepage": "https://github.com/MrVangonen/teacher-lk-backend#readme",
-  "devDependencies": {
-    "express": "^4.17.1"
-  },
+  "devDependencies": {},
   "dependencies": {
+    "express": "^4.17.1",
     "nodemon": "^2.0.4"
   }
 }
