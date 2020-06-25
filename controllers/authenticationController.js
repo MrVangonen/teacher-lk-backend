@@ -2,6 +2,9 @@ const auth = require('../config/auth.js')
 const users = require('../db_apis/users.js')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const {
+    v4: uuidv4
+} = require('uuid');
 
 async function login(req, res, next) {
     try {
@@ -13,7 +16,9 @@ async function login(req, res, next) {
         const user = await users.getUser(context.username) //choose new added user
 
         if (!user || !user.length) {
-            res.status(400).send('No user found')
+            res.status(401).send({
+                noUserFound: true
+            })
             return
         }
 
@@ -21,8 +26,7 @@ async function login(req, res, next) {
 
         if (!passwordIsValid) {
             res.status(401).send({
-                auth: false,
-                access_token: null
+                incorrectPassword: true
             })
             return
         }
@@ -34,13 +38,12 @@ async function login(req, res, next) {
                 expiresIn: 86400 // expires in 24 hours
             });
 
+        delete user[0].password; // No password!
+
         res.status(200).send({
             auth: true,
             access_token: access_token,
-            user: {
-                name: user[0].name,
-                username: user[0].username
-            }
+            user: user[0]
         });
     } catch (err) {
         next(err)
@@ -72,7 +75,7 @@ async function checkUsername(req, res, next) {
 
         let oldUser = await users.getUser(context.username)
 
-        if(oldUser.length) {
+        if (oldUser.length) {
             payload.isUserRegistered = true
         } else {
             payload.isUserRegistered = false
@@ -92,27 +95,34 @@ async function registration(req, res, next) {
 
         Object.keys(req.body).length && (context = req.body)
         Object.keys(req.query).length && (context = req.query)
-        
+
         if (!(context.name && context.username && context.password && context.password.length >= 8)) {
-            res.status(500).send('Uncorrect data')
+            res.status(401).send({
+                uncorrectData: true
+            })
             return
         }
 
         let oldUser = await users.getUser(context.username)
 
         if (oldUser.length) {
-            res.status(500).send('You are already registered')
+            res.status(401).send({
+                alreadyRegistered: true
+            })
             return
         }
+
+        //generate new uuid for user
+        context.id = uuidv4()
 
         context.name = context.name
         context.username = context.username
         context.password = context.password
+        context.position = context.position
         context.birthday = context.birthday
-        console.log(context)
 
         await users.insertNewUser(context)
-        const user = await users.getUser(context.username) //choose new added user
+        const user = await users.getUser(context.username) //choose a new added user
 
         let access_token = jwt.sign({
                 id: user.id
@@ -121,10 +131,12 @@ async function registration(req, res, next) {
                 expiresIn: 86400 // expires in 24 hours
             });
 
+        delete user[0].password; // No password!
+
         res.status(200).send({
             auth: true,
             access_token: access_token,
-            user: user
+            user: user[0]
         });
     } catch (err) {
         next(err)

@@ -23,9 +23,10 @@ module.exports.find = find;
 async function insertNewUser(context) {
     const binds = [];
 
-    binds.push(context.username, bcrypt.hashSync(context.password, 8), context.name);
+    binds.push(context.id, context.username, bcrypt.hashSync(context.password, 8),
+        context.name, context.position, context.birthday);
 
-    let query = 'insert into users(username, password, name) values(?, ?, ?)'
+    let query = 'insert into users(id, username, password, name, position, birthday) values(?, ?, ?, ?, ?, ?)'
     const result = await database.simpleExecute(query, binds);
     console.log(result)
 
